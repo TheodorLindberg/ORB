@@ -1,0 +1,11 @@
+﻿  Connection.cpp
+  Main.cpp
+C:\Users\theod\source\repos\ORB\ORB\src\ORB.h(20,27): warning C4002: too many arguments for function-like macro invocation 'ORB_ASSERT'
+C:\Users\theod\source\repos\ORB\ORB\src\ORB.h(22,45): warning C4002: too many arguments for function-like macro invocation 'ORB_ASSERT'
+  Node.cpp
+  ORB.cpp
+C:\Users\theod\source\repos\ORB\ORB\src\ORB.h(20,27): warning C4002: too many arguments for function-like macro invocation 'ORB_ASSERT'
+C:\Users\theod\source\repos\ORB\ORB\src\ORB.h(22,45): warning C4002: too many arguments for function-like macro invocation 'ORB_ASSERT'
+  Generating Code...
+C:\Users\theod\source\repos\ORB\ORB\src\Connection.h(13): warning C4715: 'Orb::Connection::connected': not all control paths return a value
+  ORB.vcxproj -> C:\Users\theod\source\repos\ORB\Debug\ORB.exe
