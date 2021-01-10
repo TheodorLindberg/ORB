@@ -16,6 +16,8 @@ namespace Orb
 		
 		std::vector<std::pair<Node*, NodeId>> m_Nodes;
 		std::vector< std::pair<Connection*, ConnectionId>> m_Connections;
+		
+		std::unordered_map<NodeId, std::string> m_DebugNames;
 	public:
 		Node* node(NodeId id) { ORB_ASSERT(valid(id), "trying to get node with invalid id"); return m_Nodes[getPos(id)].first; }
 		Node* tryNode(NodeId id) { if (valid(id)) { return m_Nodes[getPos(id)].first; } else { return nullptr; } }
@@ -23,9 +25,11 @@ namespace Orb
 		Connection* tryConnection(ConnectionId id) { if (valid(id)) { return m_Connections[getPos(id)].first; } else { return nullptr; } }
 
 		NodeRef createNode();
+		NodeRef createNode(const std::string& debug);
 		ConnectionRef createConnection(NodeRef first, NodeRef second);
 
-
+		const std::string& debugName(NodeId id);
+		
 
 
 		[[nodiscard]] bool valid(const NodeId entity) const
@@ -45,7 +49,6 @@ namespace Orb
 		{
 			return to_integral(id) & id_traits<Id>::id_mask;
 		}
-		
 	};
 	
 }

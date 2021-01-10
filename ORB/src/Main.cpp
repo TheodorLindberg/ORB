@@ -10,13 +10,181 @@
 
 //Serchable object
 
+Orb::ORB* orb = nullptr;
 
+struct Nodes
+{
+
+	struct Value
+	{
+		struct Digits
+		{
+			Orb::NodeRef _0;
+			Orb::NodeRef _1;
+			Orb::NodeRef _2;
+			Orb::NodeRef _3;
+			Orb::NodeRef _4;
+			Orb::NodeRef _5;
+			Orb::NodeRef _6;
+			Orb::NodeRef _7;
+			Orb::NodeRef _8;
+			Orb::NodeRef _9;
+
+			Orb::NodeRef digit(unsigned int digit) { return *(&_0 + digit); }
+		} digits;
+		Orb::NodeRef digit;
+		
+		struct DigitPlace
+		{
+			static constexpr int max_place = 18;
+			static constexpr int min_place = 18;
+			
+			Orb::NodeRef _n18;//10^n
+			Orb::NodeRef _n17;
+			Orb::NodeRef _n16;
+			Orb::NodeRef _n15;
+			Orb::NodeRef _n14;
+			Orb::NodeRef _n13;
+			Orb::NodeRef _n12;
+			Orb::NodeRef _n11;
+			Orb::NodeRef _n10;
+			Orb::NodeRef _n9;
+			Orb::NodeRef _n8;
+			Orb::NodeRef _n7;
+			Orb::NodeRef _n6;
+			Orb::NodeRef _n5;
+			Orb::NodeRef _n4;
+			Orb::NodeRef _n3;
+			Orb::NodeRef _n2;
+			Orb::NodeRef _n1;
+
+			Orb::NodeRef _0;
+			
+			Orb::NodeRef _1; 
+			Orb::NodeRef _2;
+			Orb::NodeRef _3;
+			Orb::NodeRef _4;
+			Orb::NodeRef _5;
+			Orb::NodeRef _6;
+			Orb::NodeRef _7;
+			Orb::NodeRef _8;
+			Orb::NodeRef _9;
+			Orb::NodeRef _10;
+			Orb::NodeRef _11;
+			Orb::NodeRef _12;
+			Orb::NodeRef _13;
+			Orb::NodeRef _14;
+			Orb::NodeRef _15;
+			Orb::NodeRef _16;
+			Orb::NodeRef _17;
+			Orb::NodeRef _18;
+			
+			Orb::NodeRef place(int place) { return *(&_0 + place); }
+			
+		} digit_positions;
+		Orb::NodeRef digit_position;
+
+		Orb::NodeRef property;
+		Orb::NodeRef value;
+
+		
+		Orb::NodeRef value_number;
+		Orb::NodeRef value_text;
+	} value;
+} nodes;
+
+
+
+Orb::NodeRef createNumberValue(const std::string& strValue)
+{
+	//Index of .
+	std::size_t find = strValue.find('.');
+
+	std::string data = strValue;
+	
+	const int digit_place_start = (find == std::string::npos) ? data.size() - 1  : find - 1;
+
+	if(find != std::string::npos)
+		data.erase(find, 1);
+
+	auto value = orb->createNode();
+
+	for(int i = 0; i < data.size(); i++)
+	{
+		int position = digit_place_start - i;
+		char c = data[i];
+		int digit = c - '0';
+
+		auto digit_node = nodes.value.digits.digit(digit);
+		auto position_node = nodes.value.digit_positions.place(position);
+
+		auto con = orb->createConnection(value, position_node);
+		con->addValue(digit_node);
+	}
+	orb->createConnection(value, nodes.value.value_number);
+	return value;
+}
+
+std::string readNumberValue(Orb::NodeRef value)
+{
+	auto digitNodes = value->getConnectionsConnectedTo(nodes.value.digit_position);
+	
+	double ret = 0;
+	for(auto digit : digitNodes)
+	{
+		auto d = orb->debugName(digit);
+		d.erase(d.begin(), d.begin() + d.find_last_of('_') + 1);
+		int num = std::stoi(d.c_str());
+
+		double position_power = std::pow(10, num);
+
+		auto digit_node = value->getConnectionTo(digit)->getValues().front();
+
+		auto digit_debug = orb->debugName(digit_node);
+		digit_debug.erase(digit_debug.begin(), digit_debug.begin() + digit_debug.find_last_of('_') + 1);
+		double digit_value = std::stod(digit_debug);
+		ret += digit_value * position_power;
+		
+	}
+	return std::to_string(ret);
+}
 
 int main()
 {
 	std::cout << "ORB" << std::endl;
+	
+	orb = new Orb::ORB();
+	
 
-	Orb::ORB* orb = new Orb::ORB();
+	{
+		nodes.value.value = orb->createNode("value");
+		nodes.value.value_number = orb->createNode("value_number");
+		nodes.value.value_text= orb->createNode("value_text");
+		
+		nodes.value.property = orb->createNode("property");
+		
+		nodes.value.digit = orb->createNode("digit");
+		nodes.value.digit_position = orb->createNode("digit_position");
+		
+		for(int i = 0; i < 10; i++)
+		{
+			(&nodes.value.digits._0)[i] = orb->createNode(std::string("digit_") + std::to_string(i));
+			orb->createConnection((&nodes.value.digits._0)[i], nodes.value.digit);
+		}
+		
+		for (int i = 0; i < 18 + 18 +1; i++)
+		{
+			(&nodes.value.digit_positions._n18)[i] = orb->createNode(std::string("digit_position_") + std::to_string(i - 18));
+			orb->createConnection((&nodes.value.digit_positions._n18)[i], nodes.value.digit_position);
+		}
+	}
+	std::string str;
+	while(std::getline(std::cin, str))
+	{
+		auto val = createNumberValue(str);
+		std::cout << readNumberValue(val) << std::endl;
+
+	}
 	
 	std::multimap<std::string, Orb::NodeRef> map;
 	
@@ -44,10 +212,6 @@ int main()
 	con1->addValue(objectValue);
 	
 	auto worldObject = orb->createNode();
-
-
-
-
 
 	map.insert({ "object", object });
 	

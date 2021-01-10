@@ -17,46 +17,8 @@ namespace Orb
 	Node* getORBReference(ORB* orb, NodeId node);
 	Connection* getORBReference(ORB* orb, ConnectionId node);
 
-	template<typename T, typename Id>
-	class Ref
-	{
-	private:
-		Id m_Id;
-		ORB* m_ORB;
-	public:
-		using ref_type = Ref<T, Id>;
-		
-		Ref(Id id, ORB* orb)
-			: m_Id(id), m_ORB(orb)
-		{}
-		
-		operator Id() const { return m_Id; }
-		operator T* () const { return getRef(); }
-
-		ORB* getORB() const { return m_ORB; }
-		Id getId() const { return m_Id; }
-		T* getRef() const { return getORBReference(m_ORB, m_Id); }
-
-		T* operator->() { return getRef(); }
 
 
-
-		bool operator==(ref_type& rhs) const
-		{
-			return m_Id == rhs.m_Id && m_ORB == rhs.m_ORB;
-		}
-		bool operator!=(ref_type& rhs) const
-		{
-			return !(*this == rhs);
-		}
-	};
-
-	
-
-	using NodeRef = Ref<Node, NodeId>;
-	using ConnectionRef = Ref<Connection, ConnectionId>;
-
-	
 	template<typename, typename = void>
 	struct id_traits;
 
@@ -95,14 +57,14 @@ namespace Orb
 
 	struct null_t {
 		template<typename Id>
-		[[nodiscard]] constexpr operator Id() const  {
+		[[nodiscard]] constexpr operator Id() const {
 			return Id{ id_traits<Id>::id_mask };
 		}
 
-		[[nodiscard]] constexpr bool operator==(const null_t&) const  {
+		[[nodiscard]] constexpr bool operator==(const null_t&) const {
 			return true;
 		}
-		[[nodiscard]] constexpr bool operator!=(const null_t&) const  {
+		[[nodiscard]] constexpr bool operator!=(const null_t&) const {
 			return false;
 		}
 
@@ -128,4 +90,51 @@ namespace Orb
 		return !(other == id);
 	}
 	inline constexpr null_t null{};
+	
+	template<typename T, typename Id>
+	class Ref
+	{
+	private:
+		Id m_Id;
+		ORB* m_ORB;
+		T* ref;
+	public:
+		using ref_type = Ref<T, Id>;
+		Ref()
+			:m_Id(null), m_ORB(nullptr)
+		{}
+		Ref(Id id, ORB* orb)
+			: m_Id(id), m_ORB(orb)
+		{
+			if(m_Id != null)
+				ref = getRef();
+		}
+		
+		operator Id() const { return m_Id; }
+		operator T* () const { return getRef(); }
+
+		ORB* getORB() const { return m_ORB; }
+		Id getId() const { return m_Id; }
+		T* getRef() const { return getORBReference(m_ORB, m_Id); }
+
+		T* operator->() { return getRef(); }
+
+		bool valid() { return m_Id != null && m_ORB != nullptr; }
+		operator bool() { return valid(); }
+
+		bool operator==(ref_type& rhs) const
+		{
+			return m_Id == rhs.m_Id && m_ORB == rhs.m_ORB;
+		}
+		bool operator!=(ref_type& rhs) const
+		{
+			return !(*this == rhs);
+		}
+	};
+
+	
+
+	using NodeRef = Ref<Node, NodeId>;
+	using ConnectionRef = Ref<Connection, ConnectionId>;
+
 }

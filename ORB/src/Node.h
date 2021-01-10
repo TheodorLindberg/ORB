@@ -15,10 +15,16 @@ namespace Orb
 		ConnectionRef getConnectionTo(NodeRef to);
 
 		const std::vector<ConnectionRef>& getConnections() const;
+
+
+		std::vector<NodeRef> getConnectionsConnectedTo(NodeRef node);
+		
+		std::string debug_name = "";
 	private:
 		Node(NodeId id)
 			: m_Id(id)
 		{}
+
 		
 		NodeId m_Id;
 		std::vector<ConnectionRef> m_Connections;

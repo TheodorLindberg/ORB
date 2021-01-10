@@ -12,3 +12,16 @@ Orb::ConnectionRef Orb::Node::getConnectionTo(NodeRef to)
 	}
 	return Orb::ConnectionRef(null, to.getORB());
 }
+
+std::vector<Orb::NodeRef> Orb::Node::getConnectionsConnectedTo(NodeRef node)
+{
+	std::vector<NodeRef> ret;
+	for(auto con : m_Connections)
+	{
+		auto connection = con->other({ m_Id, node.getORB() })->getConnectionTo(node);
+		
+		if (connection)
+			ret.push_back(connection->other(node));
+	}
+	return ret;
+}

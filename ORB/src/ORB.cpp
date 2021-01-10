@@ -20,6 +20,14 @@ NodeRef ORB::createNode()
 	return NodeRef(id, this);
 }
 
+NodeRef ORB::createNode(const std::string& debug)
+{
+	auto node = createNode();
+	m_DebugNames[node->m_Id] = debug;
+	node->debug_name = debug;
+	return node;
+}
+
 ConnectionRef ORB::createConnection(NodeRef first, NodeRef second)
 {
 	ORB_ASSERT(static_cast<typename connection_traits_type::id_type>(m_Connections.size()) < connection_traits_type::id_mask);
@@ -33,5 +41,15 @@ ConnectionRef ORB::createConnection(NodeRef first, NodeRef second)
 	second->addConnection(ConnectionRef(id, this));
 	
 	return ConnectionRef(id, this);
+}
+
+const std::string& ORB::debugName(NodeId id)
+{
+	static std::string null = "";
+	auto it = m_DebugNames.find(id);
+	if (it != m_DebugNames.end())
+		return it->second;
+	else
+		return null;
 }
 }

@@ -44,5 +44,11 @@
     <ClInclude Include="src\Core\Ref.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Util\Storage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\File.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

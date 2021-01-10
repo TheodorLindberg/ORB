@@ -1,0 +1,6 @@
+﻿  Main.cpp
+C:\Users\Theodor\Desktop\ORB\ORB\src\ORB.h(22,27): warning C4002:  too many arguments for function-like macro invocation 'ORB_ASSERT'
+C:\Users\Theodor\Desktop\ORB\ORB\src\ORB.h(24,45): warning C4002:  too many arguments for function-like macro invocation 'ORB_ASSERT'
+C:\Users\Theodor\Desktop\ORB\ORB\src\Main.cpp(105,89): warning C4267:  'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Theodor\Desktop\ORB\ORB\src\Main.cpp(105,89): warning C4267:  'initializing': conversion from 'size_t' to 'const int', possible loss of data
+  ORB.vcxproj -> C:\Users\Theodor\Desktop\ORB\x64\Debug\ORB.exe
